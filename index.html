@@ -566,10 +566,9 @@
 </head>
 
 <body>
-    <audio id="bgm" loop>
-
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
+   <audio id="bgm" loop playsinline>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
 
     <div id="petal-container"></div>
 
@@ -718,9 +717,9 @@ function initMap() {
                     <div class="account-row">
                         <div class="account-info">
                             <div class="account-name">신랑 김희윤</div>
-                            <div class="account-number">국민은행 123-456-7890</div>
+                            <div class="account-number">우리은행 1002-647-939280</div>
                         </div>
-                        <button class="copy-btn" onclick="copyAccount('국민은행 123-456-7890')">복사</button>
+                        <button class="copy-btn" onclick="copyAccount('우리은행 1002-647-939280')">복사</button>
                     </div>
                 </div>
                 <div class="account-card">
@@ -977,20 +976,34 @@ generateCalendar(weddingDate);
         updateCountdown();
        
         /* ===== 음악 자동 재생 보완 ===== */
-        const audio = document.getElementById("bgm");
+        document.addEventListener("DOMContentLoaded", function () {
 
-        window.addEventListener("load", function () {
-            audio.play().catch(() => {
-                console.log("자동재생 차단됨 - 사용자 클릭 필요");
+    const audio = document.getElementById("bgm");
+    let hasPlayed = false;
+
+    function playAudio() {
+        if (!hasPlayed) {
+            audio.play().then(() => {
+                hasPlayed = true;
+            }).catch(() => {
+                console.log("자동재생 차단");
             });
-        });
+        }
+    }
 
-        document.addEventListener("click", function () {
-            audio.play();
-        });
-        function toggleMusic() {
-            const audio = document.getElementById("bgm");
-            audio.muted = !audio.muted;
+    window.addEventListener("scroll", playAudio, { once: true });
+    window.addEventListener("touchstart", playAudio, { once: true });
+
+});
+      function toggleMusic() {
+    const audio = document.getElementById("bgm");
+
+    if (audio.paused) {
+        audio.play().catch(() => {});
+    } else {
+        audio.pause();
+    }
+}
         }
         // 갤러리 클릭 이벤트 연결
         document.querySelectorAll(".gallery-item img").forEach(img => {
@@ -1042,6 +1055,7 @@ generateCalendar(weddingDate);
 
 
 </html>
+
 
 
 
