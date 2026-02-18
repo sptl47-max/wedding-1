@@ -643,6 +643,28 @@
             <script type="text/javascript"
                 src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=62ea259317c7f5a899f1cb2c8e5f6e68&libraries=services"></script>
             <script>
+                <!-- 지도 초기화 코드 -->
+  <script>
+    window.onload = function() {
+      var mapContainer = document.getElementById('map');
+      var mapOption = {
+        center: new kakao.maps.LatLng(37.4786, 126.8665), // 광명 AK플라자 근처 좌표
+        level: 3
+      };
+      var map = new kakao.maps.Map(mapContainer, mapOption);
+
+      var geocoder = new kakao.maps.services.Geocoder();
+      geocoder.addressSearch('경기 광명시 양지로 17 AK플라자 광명점 5층 아이벡스컨벤션', function(result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+          var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+          var marker = new kakao.maps.Marker({ map: map, position: coords });
+          var infowindow = new kakao.maps.InfoWindow({ content: '<div style="padding:5px;">아이벡스컨벤션</div>' });
+          infowindow.open(map, marker);
+          map.setCenter(coords);
+        }
+      });
+    };
+
                 function initMap() {
                     // 이미 지도가 생성되었는지 확인 (중복 생성 방지)
                     var mapContainer = document.getElementById('map');
@@ -1033,3 +1055,4 @@
 
 
 </html>
+
