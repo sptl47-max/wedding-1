@@ -977,6 +977,20 @@ generateCalendar(weddingDate);
        
         /* ===== 음악 자동 재생 보완 ===== */
         document.addEventListener("DOMContentLoaded", function () {
+ // 갤러리 클릭 이벤트 연결
+        document.querySelectorAll(".gallery-item img").forEach(img => {
+            img.addEventListener("click", function () {
+                const modal = document.getElementById("imageModal");
+                const modalImg = document.getElementById("modalImg");
+
+                modal.style.display = "flex";
+                modalImg.src = this.src;
+            });
+        });
+
+        function closeModal() {
+            document.getElementById("imageModal").style.display = "none";
+        }
 
     const audio = document.getElementById("bgm");
     let hasPlayed = false;
@@ -1004,22 +1018,6 @@ generateCalendar(weddingDate);
         audio.pause();
     }
 }
-        }
-        // 갤러리 클릭 이벤트 연결
-        document.querySelectorAll(".gallery-item img").forEach(img => {
-            img.addEventListener("click", function () {
-                const modal = document.getElementById("imageModal");
-                const modalImg = document.getElementById("modalImg");
-
-                modal.style.display = "flex";
-                modalImg.src = this.src;
-            });
-        });
-
-        function closeModal() {
-            document.getElementById("imageModal").style.display = "none";
-        }
-
         // 계좌번호 토글 기능
         function showAccount(side) {
             const groomList = document.getElementById('groom-accounts');
@@ -1055,6 +1053,7 @@ generateCalendar(weddingDate);
 
 
 </html>
+
 
 
 
