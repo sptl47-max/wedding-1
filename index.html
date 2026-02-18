@@ -628,7 +628,7 @@
             <div class="info-box">
                 <div id="calendar"></div>
                 <div id="dday"></div>
-                <div style="width: 100%; height: 1px; background: #fff; margin: 20px 0; opacity: 0.5;"></div>
+                <div style="width: 100%; height: 1px; background: #fff; margin: 10px 0; opacity: 0.5;"></div>
             </div>
         </section>
 
@@ -876,7 +876,7 @@ function initMap() {
         const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
 
         document.getElementById("dday").innerHTML =
-            "<div style='font-size:1.3rem; margin-bottom:15px; font-weight:600;'>💍 D-" + days + "</div>";
+            "<div style='font-size:1.3rem; margin-bottom:5px; font-weight:600;'>💍 D-" + days + "</div>";
 
         function generateCalendar(date) {
             const year = date.getFullYear();
@@ -1042,6 +1042,7 @@ generateCalendar(weddingDate);
 
 
 </html>
+
 
 
 
