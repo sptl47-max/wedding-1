@@ -946,7 +946,35 @@ function initMap() {
 
             document.getElementById("calendar").innerHTML = calendarHTML;
         }
+generateCalendar(weddingDate);
+        function updateCountdown() {
+            const now = new Date();
+            const gap = weddingDate - now;
 
+            if (gap <= 0) {
+                document.getElementById("countdown").innerHTML =
+                    "<div style='margin-bottom:15px;'>💐 오늘입니다</div>";
+                return;
+            }
+
+            const days = Math.floor(gap / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((gap / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((gap / (1000 * 60)) % 60);
+            const seconds = Math.floor((gap / 1000) % 60);
+
+            document.getElementById("countdown").innerHTML =
+                `<div style="
+            font-size:0.95rem;
+            margin-bottom:20px;
+            color:#666;
+            letter-spacing:1px;
+        ">
+            ${days}일 ${hours}시간 ${minutes}분 ${seconds}초
+        </div>`;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
        
         /* ===== 음악 자동 재생 보완 ===== */
         const audio = document.getElementById("bgm");
