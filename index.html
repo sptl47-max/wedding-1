@@ -627,7 +627,6 @@
             <h2>예식 안내</h2>
             <div class="info-box">
                 <div id="calendar"></div>
-                <div id="countdown"></div>
                 <div id="dday"></div>
                 <div style="width: 100%; height: 1px; background: #fff; margin: 20px 0; opacity: 0.5;"></div>
             </div>
@@ -687,9 +686,11 @@ function initMap() {
                 주소검색: "경기 광명시 일직동 512-3" 입력<br>
                 U플래닛(AK플라자)주차장 B3-B8<br>
                 * 주차 공간이 협소할 수 있으니 대중교통 이용을 권장합니다.<br>
+                <br>
                      🚂 지하철<br>
             1호선 광명역(영등포 <-> 광명역) 1번, 3번 출구 도보 5분<br>
-           🚌 버스 <br>
+           <br>
+                🚌 버스 <br>
                 광명역데시앙, 일직동행정복지센터 정류장 하차 <br>
                 -> AK 플라자 바로 앞<br>
                 일반, 지선, 마을: 8-2, 22, 50, 200, 5627, 5633, 1-1, 1-3<br>
@@ -946,37 +947,7 @@ function initMap() {
             document.getElementById("calendar").innerHTML = calendarHTML;
         }
 
-        generateCalendar(weddingDate);
-        function updateCountdown() {
-            const now = new Date();
-            const gap = weddingDate - now;
-
-            if (gap <= 0) {
-                document.getElementById("countdown").innerHTML =
-                    "<div style='margin-bottom:15px;'>💐 오늘입니다</div>";
-                return;
-            }
-
-            const days = Math.floor(gap / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((gap / (1000 * 60 * 60)) % 24);
-            const minutes = Math.floor((gap / (1000 * 60)) % 60);
-            const seconds = Math.floor((gap / 1000) % 60);
-
-            document.getElementById("countdown").innerHTML =
-                `<div style="
-            font-size:0.95rem;
-            margin-bottom:20px;
-            color:#666;
-            letter-spacing:1px;
-        ">
-            ${days}일 ${hours}시간 ${minutes}분 ${seconds}초
-        </div>`;
-        }
-
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
-
-
+       
         /* ===== 음악 자동 재생 보완 ===== */
         const audio = document.getElementById("bgm");
 
@@ -1043,6 +1014,7 @@ function initMap() {
 
 
 </html>
+
 
 
 
