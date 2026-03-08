@@ -5,7 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>모바일 청첩장</title>
-    <!-- 폰트 적용 (구글 폰트: Noto Serif KR - 감성적인 명조체) -->
+    <!-- 폰트 및 CDN 최적화 (버퍼링 감소를 위한 Preconnect) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap" rel="stylesheet">
     <meta name="theme-color" content="#ffeff3">
     <link rel="manifest" href="manifest.json">
@@ -513,7 +517,8 @@
         .gallery-item {
             width: 100%;
             height: 200px;
-            background-color: #ddd;
+            background-color: #f0f0f0;
+            /* 로딩 전 배경색 추가 (스켈레톤 효과) */
             border-radius: 5px;
             overflow: hidden;
             position: relative;
@@ -935,9 +940,9 @@
                     <div class="account-row">
                         <div class="account-info">
                             <div class="account-name">부 김학수</div>
-                            <div class="account-number">국민 105-21-0700-544</div>
+                            <div class="account-number">국민은행 105-21-0700-544</div>
                         </div>
-                        <button class="copy-btn" onclick="copyAccount('국민 105-21-0700-544')">복사</button>
+                        <button class="copy-btn" onclick="copyAccount('국민은행 105-21-0700-544')">복사</button>
                     </div>
                 </div>
                 <div class="account-card">
@@ -1199,53 +1204,79 @@
         const loadMoreBtn = document.getElementById("loadMoreBtn");
 
         const totalImages = 32;
-        const firstVisible = 9;
+        const firstVisible = 8;
 
-        function createImage(i) {
+        // 슬라이드 생성 (미리 40장 모두 생성하여 슬라이더 인덱스 불일치 해결)
+        function createSwiperSlide(i) {
             let imgPath = `images/background (${i}).jpg`;
-            // 1번 이미지만 예외적으로 main.jpg를 사용한다면 (사용자 의도에 따라 조정 가능)
             if (i === 1) imgPath = `images/main.jpg`;
 
-            // 갤러리 썸네일
+            const slide = document.createElement("div");
+            slide.className = "swiper-slide";
+
+            const slideImg = document.createElement("img");
+            // Native Lazy Loading 적용
+            slideImg.src = imgPath;
+            slideImg.loading = "lazy";
+            slideImg.alt = `웨딩사진${i}`;
+
+            // Swiper 11 Lazy Loading 프리로더 추가
+            const preloader = document.createElement("div");
+            preloader.className = "swiper-lazy-preloader";
+
+            slide.appendChild(slideImg);
+            slide.appendChild(preloader);
+            swiperWrapper.appendChild(slide);
+        }
+
+        // 썸네일 생성
+        function createThumbnail(i) {
+            let imgPath = `images/background (${i}).jpg`;
+            if (i === 1) imgPath = `images/main.jpg`;
+
             const galleryItem = document.createElement("div");
             galleryItem.className = "gallery-item";
 
             const img = document.createElement("img");
             img.src = imgPath;
+
+            // 첫 4장은 가장 먼저 로드되도록 설정 (지연 로딩 해제 및 우선순위 상향)
+            if (i <= 4) {
+                img.setAttribute('fetchpriority', 'high');
+            } else {
+                img.loading = "lazy";
+            }
+
             img.alt = `웨딩사진${i}`;
 
             galleryItem.appendChild(img);
             galleryGrid.appendChild(galleryItem);
 
-            // swiper 슬라이드
-            const slide = document.createElement("div");
-            slide.className = "swiper-slide";
-
-            const slideImg = document.createElement("img");
-            slideImg.src = imgPath;
-            slideImg.alt = `웨딩사진${i}`;
-
-            slide.appendChild(slideImg);
-            swiperWrapper.appendChild(slide);
-
-            // 클릭 이벤트 연결
+            // 클릭 이벤트: 전체 40장 중 해당 인덱스로 이동
             galleryItem.addEventListener("click", function () {
                 const modal = document.getElementById("imageModal");
                 modal.style.display = "flex";
                 document.body.style.overflow = 'hidden';
-                swiper.slideToLoop(i - 1, 0);
+                if (swiper) {
+                    swiper.slideToLoop(i - 1, 0);
+                }
             });
         }
 
-        // 초기 이미지 로드
-        for (let i = 1; i <= firstVisible; i++) {
-            createImage(i);
+        // 1. 모든 슬라이드를 먼저 생성 (사용자 요청: 9장만 보일 때도 전체 슬라이드 가능하도록)
+        for (let i = 1; i <= totalImages; i++) {
+            createSwiperSlide(i);
         }
 
-        // 더보기 버튼
+        // 2. 초기 9개 썸네일 노출
+        for (let i = 1; i <= firstVisible; i++) {
+            createThumbnail(i);
+        }
+
+        // 더보기 버튼: 나머지 썸네일 노출
         loadMoreBtn.addEventListener("click", function () {
             for (let i = firstVisible + 1; i <= totalImages; i++) {
-                createImage(i);
+                createThumbnail(i);
             }
             loadMoreBtn.style.display = "none";
         });
@@ -1254,9 +1285,12 @@
         let swiper;
 
         document.addEventListener("DOMContentLoaded", function () {
-            // Swiper 초기화
+            // 모든 슬라이드가 생성된 후 Swiper 초기화
             swiper = new Swiper(".mySwiper", {
                 loop: true,
+                lazy: true,
+                // 전후 3장씩 미리 로드하여 스와이프 시 버퍼링 제로화
+                lazyPreloadPrevNext: 3,
                 pagination: {
                     el: ".swiper-pagination",
                     clickable: true,
@@ -1266,10 +1300,7 @@
                     prevEl: ".swiper-button-prev",
                 },
             });
-
         });
-
-        // (기존 클릭 이벤트 로직은 createImage 내부로 이동됨)
 
 
         const audio = document.getElementById("bgm");
@@ -1333,6 +1364,3 @@
     </script>
 
 </body>
-
-
-
