@@ -4,7 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>모바일 청첩장</title>
+    <title>김희윤 ❤️ 김슬기, 당신을 초대합니다</title>
+<!-- Social Media Metadata (Open Graph) -->
+<meta property="og:title" content="김희윤 ❤️ 김슬기, 당신을 초대합니다">
+<meta property="og:description" content="2026년 5월 23일 토요일 오후 3시 ">
+<meta property="og:image" content="wedd.png">
+<meta property="og:type" content="website">
     <!-- 폰트 및 CDN 최적화 (버퍼링 감소를 위한 Preconnect) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1270,21 +1275,24 @@
             galleryItem.appendChild(img);
             galleryGrid.appendChild(galleryItem);
 
-            // 클릭 이벤트: 전체 40장 중 해당 인덱스로 이동
+           // 클릭 이벤트: 전체 40장 중 해당 인덱스로 이동
             galleryItem.addEventListener("click", function () {
                 const modal = document.getElementById("imageModal");
-
-                // 먼저 슬라이더를 해당 인덱스로 이동
-                if (swiper) {
-                    swiper.slideToLoop(i - 1, 0);
-                }
-
-                // 그 다음 모달을 표시 (첫 이미지가 잠깐 나타나는 현상 방지)
+                // 1. 모달을 눈에 보이지 않게 투명도를 0으로 설정하고 화면에 띄움
+                modal.style.opacity = "0";
                 modal.style.display = "flex";
                 document.body.style.overflow = 'hidden';
+                if (swiper) {
+                    // 2. Swiper 갱신 및 터치한 사진으로 즉시 이동
+                    swiper.update(); 
+                    swiper.slideToLoop(i - 1, 0, false); // 세 번째 인자에 false를 추가하여 불필요한 애니메이션 차단
+                }
+                // 3. Swiper가 슬라이드를 완전히 이동시킬 아주 짧은 시간을 준 뒤 복구 (핵심 수정 사항)
+                setTimeout(() => {
+                    modal.style.opacity = "1";
+                }, 50); // 50ms 후 투명도 복구하여 첫 사진 깜빡임 해결
             });
-        }
-
+        } 
         // 1. 모든 슬라이드를 먼저 생성 (사용자 요청: 9장만 보일 때도 전체 슬라이드 가능하도록)
         for (let i = 1; i <= totalImages; i++) {
             createSwiperSlide(i);
@@ -1313,6 +1321,8 @@
                 lazy: true,
                 // 전후 3장씩 미리 로드하여 스와이프 시 버퍼링 제로화
                 lazyPreloadPrevNext: 3,
+                observer: true,       // 요소의 변경을 감지하여 Swiper 자동 업데이트
+        observeParents: true, // 부모 요소의 변경(display 등)을 감지
                 pagination: {
                     el: ".swiper-pagination",
                     clickable: true,
@@ -1386,3 +1396,11 @@
     </script>
 
 </body>
+
+
+
+
+
+
+
+
